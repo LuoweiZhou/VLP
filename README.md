@@ -44,7 +44,7 @@ docker pull luzhou/vlp
 
 Before running the container, you need to declare the environment variable to your data root (`$DATA_ROOT`, see [data prep](#data_prep)) and it will be attached as a volume to our container. Finally, install [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker#ubuntu-16041804-debian-jessiestretchbuster) and run the docker image in a fresh container:
 ```
-nvidia-docker run --gpus all --name vlp_container -it \
+docker run --gpus all --name vlp_container -it \
      -v $DATA_ROOT:/mnt/dat \
      --shm-size 8G -p 8888:8888 vlp /bin/bash
 ```
