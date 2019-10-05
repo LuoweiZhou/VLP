@@ -88,8 +88,8 @@ tar xf vqa.tar.gz && rm vqa.tar.gz
 
 | Dataset | Batch Size | Learning Rate | # of Epochs | GPUs | Time per Epoch |
 | ----- | -----:| -----:| -----:| -----:| -----:|
-| CC | 512 | 3e-4 | 30 | 8x V100 | 5hr |
-| COCO | 512 | 1e-4 | 30 | 8x V100 | 12min |
+| CC | 512 | 1e-4 | 30 | 8x V100 | 5hr |
+| COCO | 512 | 3e-5 | 30 | 8x V100 | 12min |
 | VQA 2.0 | 128 | 2e-5 | 20 | 2x V100 | 32min |
 | Flickr30k | 512 | 3e-5 | 30 | 8x V100 | 3min |
 | COCO (w/o pre-training) | 512 | 3e-4 | 30 | 8x V100 | 12min |
@@ -126,7 +126,7 @@ An example code on single-GPU training:
 ```
 python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_ce} \
     --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
-    --do_train --learning_rate 3e-5 --new_segment_ids --always_truncate_tail --amp \
+    --do_train --new_segment_ids --always_truncate_tail --amp \
     --src_file $DATA_ROOT/COCO/annotations/dataset_coco.json \
     --file_valid_jpgs $DATA_ROOT/COCO/annotations/coco_valid_jpgs.json \
     --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0
@@ -153,7 +153,7 @@ To get the models for leaderboard, we perform the training on both train set and
 ```
 python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_flickr30k} \
     --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
-    --do_train --learning_rate 3e-5 --new_segment_ids --always_truncate_tail --amp \
+    --do_train --new_segment_ids --always_truncate_tail --amp \
     --image_root $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0 \
     --dataset flickr30k --region_bbox_file $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd/flickr30k_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5 \
     --src_file $DATA_ROOT/flickr30k/annotations/dataset_flickr30k.json \
