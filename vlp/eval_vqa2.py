@@ -15,6 +15,7 @@ import numpy as np
 import torch
 import random
 import pickle
+import sys
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer, WhitespaceTokenizer
 from pytorch_pretrained_bert.modeling import BertForPreTrainingLossMask
@@ -151,7 +152,10 @@ def main():
     # Prepare model
     cls_num_labels = 2
     type_vocab_size = 6 if args.new_segment_ids else 2
-    print(args.model_recover_path)
+    logger.info('Attempting to recover models from: {}'.format(args.model_recover_path))
+    if 0 == len(glob.glob(args.model_recover_path.strip())):
+        logger.error('There are no models to recover. The program will exit.')
+        sys.exit(1)
     for model_recover_path in glob.glob(args.model_recover_path.strip()):
         logger.info("***** Recover model: %s *****", model_recover_path)
         model_recover = torch.load(model_recover_path)
