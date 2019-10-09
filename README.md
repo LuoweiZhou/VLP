@@ -88,12 +88,14 @@ tar xf vqa.tar.gz && rm vqa.tar.gz
 
 | Dataset | Batch Size | Learning Rate | # of Epochs | GPUs | Time per Epoch |
 | ----- | -----:| -----:| -----:| -----:| -----:|
-| CC | 512 | 1e-4 | 30 | 8x V100 | 5hr |
-| COCO | 512 | 3e-5 | 30 | 8x V100 | 12min |
-| VQA 2.0 | 128 | 2e-5 | 20 | 2x V100 | 32min |
-| Flickr30k | 512 | 3e-5 | 30 | 8x V100 | 3min |
-| COCO (w/o pre-training) | 512 | 3e-4 | 30 | 8x V100 | 12min |
-| COCO (SCST training) | 64 | 1e-6 | 30 | 4x Titan Xp | 3hr |
+| CC | 64(x8) | 1e-4(x8) | 30 | 8x V100 | 5hr |
+| COCO | 64(x8) | 3e-5(x8) | 30 | 8x V100 | 12min |
+| VQA 2.0 | 64(x2) | 2e-5(x2) | 20 | 2x V100 | 32min |
+| Flickr30k | 64(x8) | 3e-5(x8) | 30 | 8x V100 | 3min |
+| COCO (w/o pre-training) | 64(x8) | 3e-4(x8) | 30 | 8x V100 | 12min |
+| COCO (SCST training) | 16(x4) | 1e-6(x4) | 30 | 4x Titan Xp | 3hr |
+
+The `(x2), (x4), (x8)` in the batch size and learning rate results from distributed data parallel. Gradients are accumulated/added across GPUs.
 
 **Note that some modules need to be imported manually:**
 
@@ -133,6 +135,25 @@ python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_c
 ```
 
 (Optional) To enable Self-Critical Sequence Training (SCST), set `--model_recover_path $CHECKPOINT_ROOT/${checkpoint_coco_ce}` `--max_pred 0`, `--mask_prob 0`, and `--scst`. The training takes 30 epochs to converge with each epoch takes roughly 3hr.
+
+An example code on 2-GPU training with distributed data parallel:
+```
+python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_ce} \
+    --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
+    --do_train --new_segment_ids --always_truncate_tail --amp \
+    --src_file $DATA_ROOT/COCO/annotations/dataset_coco.json \
+    --file_valid_jpgs $DATA_ROOT/COCO/annotations/coco_valid_jpgs.json \
+    --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0 \
+    --local_rank 0 --global_rank 0 --world_size 2
+python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_ce} \
+    --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
+    --do_train --new_segment_ids --always_truncate_tail --amp \
+    --src_file $DATA_ROOT/COCO/annotations/dataset_coco.json \
+    --file_valid_jpgs $DATA_ROOT/COCO/annotations/coco_valid_jpgs.json \
+    --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0 \
+    --local_rank 1 --global_rank 1 --world_size 2
+```
+
 
 ### VQA 2.0
 An example code on single-GPU training:
@@ -245,8 +266,8 @@ wget -O vqa2_g2_lr2e-5_batch512_ft_from_s0.75_b0.25.tar.gz "https://onedrive.liv
 wget -O flickr30k_g8_lr3e-5_batch512_ft_from_s0.75_b0.25.tar.gz "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212030&authkey=AGmfQ0fXcYCQun0"
 
 # Detectron config/model
-wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.yaml "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU"
-wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.pkl "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU"
+wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.yaml "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU"
+wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.pkl "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU"
 ```
 
 
