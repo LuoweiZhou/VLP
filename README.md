@@ -144,7 +144,7 @@ python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_c
     --src_file $DATA_ROOT/COCO/annotations/dataset_coco.json \
     --file_valid_jpgs $DATA_ROOT/COCO/annotations/coco_valid_jpgs.json \
     --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0 \
-    --local_rank 0 --global_rank 0 --world_size 2
+    --local_rank 0 --global_rank 0 --world_size 2 &
 python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_ce} \
     --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
     --do_train --new_segment_ids --always_truncate_tail --amp \
