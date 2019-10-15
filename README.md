@@ -283,6 +283,13 @@ Please acknowledge the following paper if you use the code:
 ```
 
 
+## Related Projects/Codebase
+- Pre-trained UniLM: https://github.com/microsoft/unilm
+- GVD (captioing+grounding): https://github.com/facebookresearch/grounded-video-description
+- Video DenseCap: https://github.com/salesforce/densecap
+- MT-DNN: https://github.com/namisan/mt-dnn
+
+
 ## Acknowlegement
 Our code is mainly based on [Li Dong](http://homepages.inf.ed.ac.uk/s1478528/) et al.'s [UniLM](https://github.com/microsoft/unilm) repo. Also, a part of the code is based on [pytorch-transformers v0.4.0](https://github.com/huggingface/pytorch-transformers/tree/v0.4.0) and [ImageCaptioning.pytorch](https://github.com/ruotianluo/ImageCaptioning.pytorch). We thank the authors for their wonderful open-source efforts.
 
