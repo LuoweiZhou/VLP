@@ -539,7 +539,7 @@ def main():
                 if n_gpu > 1:    # mean() to average on multi-gpu. For dist, this is done through gradient addition.
                     masked_lm_loss = masked_lm_loss.mean()
                     pretext_loss_deprecated = pretext_loss_deprecated.mean()
-                    vqa2_loss = ans_loss.mean()
+                    ans_loss = ans_loss.mean()
                 loss = masked_lm_loss + pretext_loss_deprecated + ans_loss
 
                 # logging for each step (i.e., before normalization by args.gradient_accumulation_steps)
