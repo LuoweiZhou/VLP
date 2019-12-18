@@ -1,5 +1,5 @@
 # VLP
-This repo hosts the source code for our work [Vision-Language Pre-training (VLP)](https://arxiv.org/pdf/1909.11059.pdf).
+This repo hosts the source code for our AAAI2020 work [Vision-Language Pre-training (VLP)](https://arxiv.org/pdf/1909.11059.pdf).
 We have released the pre-trained model on [Conceptual Captions](https://github.com/google-research-datasets/conceptual-captions) dataset
 and fine-tuned models on COCO Captions and Flickr30k for image captioning and VQA 2.0 for VQA.
 
@@ -242,7 +242,7 @@ For all the datasets, checkpoints (by epochs) with the best validation accuracy 
 
 
 ## <a name='misc'></a> Misc
-We use this Detectron docker [image](https://hub.docker.com/r/housebw/detectron) for region feature extraction, with this [config](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU) file and [checkpoint](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU) file. 
+The Detectron-based feature extraction code is available under this [repo](https://github.com/LuoweiZhou/detectron-vlp). You need to download this [config](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU) file and [checkpoint](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU) file.
 
 List of download commands:
 ```
@@ -266,8 +266,8 @@ wget -O vqa2_g2_lr2e-5_batch512_ft_from_s0.75_b0.25.tar.gz "https://onedrive.liv
 wget -O flickr30k_g8_lr3e-5_batch512_ft_from_s0.75_b0.25.tar.gz "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212030&authkey=AGmfQ0fXcYCQun0"
 
 # Detectron config/model
-wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.yaml "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU"
-wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x.pkl "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU"
+wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x-vlp.yaml "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU"
+wget -O e2e_faster_rcnn_X-101-64x4d-FPN_2x-vlp.pkl "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU"
 ```
 
 
