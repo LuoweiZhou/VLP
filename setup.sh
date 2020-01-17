@@ -25,7 +25,7 @@ echo "----------------- Install Apex -----------------"
 git clone -q https://github.com/NVIDIA/apex.git
 cd apex
 git reset --hard 1603407bf49c7fc3da74fceb6a6c7b47fece2ef8
-python setup.py install --user --cuda_ext --cpp_ext
+python setup.py install --cuda_ext --cpp_ext
 
 echo "----------------- Start Training -----------------"
 echo $(pwd)
