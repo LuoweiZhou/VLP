@@ -508,14 +508,15 @@ class BertPreTrainingHeads(nn.Module):
         super(BertPreTrainingHeads, self).__init__()
         self.predictions = BertLMPredictionHead(
             config, bert_model_embedding_weights)
-        self.seq_relationship = nn.Linear(config.hidden_size, num_labels)
+        # self.seq_relationship = nn.Linear(config.hidden_size, num_labels)
 
     def forward(self, sequence_output, pooled_output, task_idx=None):
         prediction_scores = self.predictions(sequence_output, task_idx)
-        if pooled_output is None:
-            seq_relationship_score = None
-        else:
-            seq_relationship_score = self.seq_relationship(pooled_output)
+        seq_relationship_score = None
+        # if pooled_output is None:
+        #     seq_relationship_score = None
+        # else:
+        #     seq_relationship_score = self.seq_relationship(pooled_output)
         return prediction_scores, seq_relationship_score
 
 
@@ -1059,9 +1060,10 @@ class BertForPreTrainingLossMask(PreTrainedBertModel):
                 attention_mask, output_all_encoded_layers=False, len_vis_input=self.len_vis_input)
 
         if masked_lm_labels is None or next_sentence_label is None:
-            prediction_scores, seq_relationship_score = self.cls(
-                sequence_output, pooled_output, task_idx=task_idx)
-            return prediction_scores, seq_relationship_score
+            raise NotImplementedError
+            # prediction_scores, seq_relationship_score = self.cls(
+            #     sequence_output, pooled_output, task_idx=task_idx)
+            # return prediction_scores, seq_relationship_score
 
         def gather_seq_out_by_pos(seq, pos):
             return torch.gather(seq, 1, pos.unsqueeze(2).expand(-1, -1, seq.size(-1)))
@@ -1097,7 +1099,7 @@ class BertForPreTrainingLossMask(PreTrainedBertModel):
         else:
             sequence_output_masked = gather_seq_out_by_pos(
                 sequence_output, masked_pos)
-            prediction_scores_masked, seq_relationship_score = self.cls(
+            prediction_scores_masked, _ = self.cls(
                 sequence_output_masked, pooled_output, task_idx=task_idx)
             if self.crit_mask_lm_smoothed:
                 masked_lm_loss = self.crit_mask_lm_smoothed(
