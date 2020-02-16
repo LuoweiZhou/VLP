@@ -36,7 +36,7 @@ cd coco-caption
 ./get_stanford_models.sh
 ```
 
-### Docker Image (Ongoing)
+### Docker Image
 First, install or upgrade to the latest [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) (e.g., set `<VERSION_STRING>` to `5:19.03.2~3-0~ubuntu-xenial`). Then pull our docker image:
 ```
 docker pull luzhou/vlp
@@ -61,7 +61,7 @@ docker build -t vlp .
 Download links for dataset annotations and features: COCO Captions+VQA 2.0 ([Part I(95GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212019&authkey=ACn4bwZ0nmZ0nik), [Part II(79GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212018&authkey=AHoTGG-7-6kwoAY), download both and run `cat COCO0* > COCO.tar.gz`), [Flickr30k Captions(27GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212015&authkey=AFZ2iehPM8HREeA). **If you prefer to download with `wget`, we attach the commands [here](#misc)**.
 Then, uncompress the downloaded files and place under your data root (denoted as `DATA_ROOT`).
 
-(Ongoing) The entire set of CC region features is immense (2TB) and we will make the release once we find an appropriate cloud storage location. Further, to evaluate CC on caption generation, download the reference [file](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212017&authkey=AHy5eiJM75RwPxg) and place it under `coco-caption/annotations`.
+To prepare for the pre-training, first download and uncompress our pre-processed Conceptual Captions (CC) [data(6GB)](https://onedrive.live.com/embed?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%213781&authkey=ANA--esfJnWIKIE) and place under your data root. Then, download and uncompress the region features from Google Drive ([feat(509GB)](https://drive.google.com/file/d/14mr49-14-ZjJXOohInzoOLBZlJb_y7fh/view?usp=sharing), [cls(468GB)](https://drive.google.com/file/d/1kRlnQJcTjGFaOHSptekgG98MiCsTQYDt/view?usp=sharing)) under the `CC/region_feat_gvd_wo_bgd/feat_cls_1000_float16` dir.  To evaluate CC on caption generation, download the reference [file](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212017&authkey=AHy5eiJM75RwPxg) and place it under `coco-caption/annotations`.
 
 Besides, download and uncompress the detectron fc7 weight files under the code root directory (denoted as `CODE_ROOT`): [GVD Detectron fc7](https://dl.fbaipublicfiles.com/ActivityNet-Entities/ActivityNet-Entities/detectron_weights.tar.gz).
 
@@ -244,7 +244,7 @@ For all the datasets, checkpoints (by epochs) with the best validation accuracy 
 ## <a name='misc'></a> Misc
 The Detectron-based feature extraction code is available under this [repo](https://github.com/LuoweiZhou/detectron-vlp). You need to download this [config](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212013&authkey=AHIvnE1FcggwiLU) file and [checkpoint](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212014&authkey=AAHgqN3Y-LXcBvU) file.
 
-List of download commands:
+List of download commands (only for OneDrive):
 ```
 wget -O caption_cc_val.json "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212017&authkey=AHy5eiJM75RwPxg"
 
@@ -252,6 +252,7 @@ wget -O caption_cc_val.json "https://onedrive.live.com/download?cid=E5364FD183A1
 wget -O COCO00 "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212019&authkey=ACn4bwZ0nmZ0nik"
 wget -O COCO01 "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212018&authkey=AHoTGG-7-6kwoAY"
 wget -O flickr30k.tar.gz "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212015&authkey=AFZ2iehPM8HREeA"
+wget -O CC.tar.gz "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%213781&authkey=ANA--esfJnWIKIE"
 
 # UniLM checkpoint
 wget -O bert_save.tar.gz "https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212016&authkey=AB5-lxzCkgpfLhg"
