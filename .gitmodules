@@ -1,6 +1,6 @@
 [submodule "coco-caption"]
 	path = coco-caption
-	url = https://github.com/kdexd/coco-caption.git
+	url = https://github.com/LuoweiZhou/coco-caption.git
 [submodule "pythia"]
 	path = pythia
 	url = https://github.com/facebookresearch/pythia.git
