@@ -5,7 +5,7 @@ and fine-tuned models on COCO Captions and Flickr30k for image captioning and VQ
 
 
 ## Installation
-### Conda Environment (Recommended)
+### Conda Environment (Option I, Recommended)
 0) Recursively ssh clone the repo to include `coco` and `pythia` submodules.
 ```
 git clone --recursive git@github.com:LuoweiZhou/VLP.git
@@ -36,7 +36,7 @@ cd coco-caption
 ./get_stanford_models.sh
 ```
 
-### Docker Image
+### Docker Image (Option II)
 First, install or upgrade to the latest [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) (e.g., set `<VERSION_STRING>` to `5:19.03.2~3-0~ubuntu-xenial`). Then pull our docker image:
 ```
 docker pull luzhou/vlp

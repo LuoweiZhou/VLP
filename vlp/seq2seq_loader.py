@@ -119,7 +119,7 @@ class Img2txtDataset(torch.utils.data.Dataset):
                     json.dump(valid_img, open(file_valid_jpgs, 'w'))
                     print('Saving {0} valid JPG IDs'.format(len(valid_img)))
                 else:
-                    valid_jpgs = json.load(open(file_valid_jpgs))
+                    valid_jpgs = set(json.load(open(file_valid_jpgs)))
                     print('Loading {0} valid JPG IDs!'.format(len(valid_jpgs)))
                     for src in img_dat:
                         if src['split'] in split:
