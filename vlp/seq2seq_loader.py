@@ -62,7 +62,7 @@ def truncate_tokens_pair(tokens_a, tokens_b, max_len, max_len_a=0, max_len_b=0, 
 class Img2txtDataset(torch.utils.data.Dataset):
     """ Load image-sentence pairs """
 
-    def __init__(self, file_src, image_root, split, batch_size, tokenizer, max_len, file_valid_jpgs='tmp.json', use_num_imgs=-1, short_sampling_prob=0.1, sent_reverse_order=False, bi_uni_pipeline=[], s2s_prob=1, bi_prob=0, l2r_prob=0, enable_butd=False, tasks='img2txt'):
+    def __init__(self, file_src, image_root, split, batch_size, tokenizer, max_len, file_valid_jpgs='tmp.json', use_num_imgs=-1, short_sampling_prob=0.1, sent_reverse_order=False, bi_uni_pipeline=[], s2s_prob=1, bi_prob=0, enable_butd=False, tasks='img2txt'):
         super().__init__()
         self.tokenizer = tokenizer  # tokenize function
         self.max_len = max_len  # maximum length of tokens
@@ -72,9 +72,8 @@ class Img2txtDataset(torch.utils.data.Dataset):
         self.sent_reverse_order = sent_reverse_order
         self.s2s_prob = s2s_prob
         self.bi_prob = bi_prob
-        self.l2r_prob = l2r_prob
-        print('Sample seq2seq {}, bidirectional {}, and left2right {}'.format(self.s2s_prob, self.bi_prob, self.l2r_prob))
-        assert(self.s2s_prob + self.bi_prob + self.l2r_prob == 1)
+        print('Sample seq2seq {} and bidirectional {}'.format(self.s2s_prob, self.bi_prob))
+        assert(self.s2s_prob + self.bi_prob == 1)
 
         # read the file into memory
         self.ex_list = []
@@ -163,7 +162,7 @@ class Img2txtDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         instance = self.ex_list[idx]
-        proc = choices(self.bi_uni_pipeline, weights=[self.s2s_prob, self.bi_prob, self.l2r_prob])[0]
+        proc = choices(self.bi_uni_pipeline, weights=[self.s2s_prob, self.bi_prob])[0]
         instance = proc(instance)
         return instance
 
@@ -197,7 +196,7 @@ class Preprocess4Seq2seq(Pipeline):
         self.max_len_b = truncate_config.get('max_len_b', None)
         self.trunc_seg = truncate_config.get('trunc_seg', None)
         self.mask_image_regions = mask_image_regions
-        assert mode in ("s2s", "l2r", "bi")
+        assert mode in ("s2s", "bi")
         self.mode = mode
         self.region_bbox_file = region_bbox_file
         self.region_det_file_prefix = region_det_file_prefix
@@ -206,8 +205,6 @@ class Preprocess4Seq2seq(Pipeline):
             self.task_idx = 3   # relax projection layer for different tasks
         elif mode == 'bi':
             self.task_idx = 0
-        elif mode == 'l2r':
-            self.task_idx = 1
 
         self.len_vis_input = len_vis_input
         self.vis_mask_prob = vis_mask_prob
@@ -247,8 +244,6 @@ class Preprocess4Seq2seq(Pipeline):
                 segment_ids = [4] * (len(tokens_a)+2) + [5] * (len(tokens_b)+1)
             elif self.mode == 'bi':
                 segment_ids = [0] * (len(tokens_a)+2) + [1] * (len(tokens_b)+1)
-            elif self.mode == 'l2r':
-                segment_ids = [2] * (len(tokens))
         else:
             segment_ids = [0] * (len(tokens_a)+2) + [1] * (len(tokens_b)+1)
 
@@ -303,12 +298,9 @@ class Preprocess4Seq2seq(Pipeline):
             input_mask[:, :len(tokens_a)+2].fill_(1)
             input_mask[second_st:second_end, second_st:second_end].copy_(
                 self._tril_matrix[:second_end-second_st, :second_end-second_st])
-        elif self.mode == 'bi':
+        else:
             input_mask = torch.tensor([1]*len(tokens)+[0]*n_pad, dtype=torch.long) \
                 .unsqueeze(0).expand(self.max_len, self.max_len).clone()
-        elif self.mode == 'l2r':
-            st, end = 0, len(tokens_a) + len(tokens_b) + 3
-            input_mask[st:end, st:end].copy_(self._tril_matrix[:end, :end])
 
         if self.mask_image_regions:
             input_mask[:, vis_masked_pos].fill_(0) # block the masked visual feature
@@ -383,7 +375,7 @@ class Preprocess4Seq2seqDecoder(Pipeline):
         self.new_segment_ids = new_segment_ids
         self.task_idx = 3   # relax projection layer for different tasks
         self.mode = mode
-        if self.mode not in ["s2s", "l2r"]:
+        if self.mode != "s2s":
             raise ValueError("Invalid mode for seq2seq decode: %s" % self.mode)
         self.max_tgt_length = max_tgt_length
         self.len_vis_input = len_vis_input
@@ -413,11 +405,8 @@ class Preprocess4Seq2seqDecoder(Pipeline):
                                max_a_len + 2, self.max_len)
         tokens = padded_tokens_a
         if self.new_segment_ids:
-            if self.mode == "s2s":
-                segment_ids = [4]*(len(padded_tokens_a)) + \
-                    [5]*(max_len_in_batch - len(padded_tokens_a))
-            else:
-                segment_ids = [2]*max_len_in_batch
+            segment_ids = [4]*(len(padded_tokens_a)) \
+                + [5]*(max_len_in_batch - len(padded_tokens_a))
         else:
             segment_ids = [0]*(len(padded_tokens_a)) \
                 + [1]*(max_len_in_batch - len(padded_tokens_a))
@@ -436,13 +425,7 @@ class Preprocess4Seq2seqDecoder(Pipeline):
         # Zero Padding
         input_mask = torch.zeros(
             max_len_in_batch, max_len_in_batch, dtype=torch.long)
-        if self.mode == "s2s":
-            input_mask[:, :len(tokens_a)+2].fill_(1)
-        else:
-            st, end = 0, len(tokens_a) + 2
-            input_mask[st:end, st:end].copy_(
-                self._tril_matrix[:end, :end])
-            input_mask[end:, :len(tokens_a)+2].fill_(1)
+        input_mask[:, :len(tokens_a)+2].fill_(1)
         second_st, second_end = len(padded_tokens_a), max_len_in_batch
 
         input_mask[second_st:second_end, second_st:second_end].copy_(

@@ -175,8 +175,6 @@ def main():
                         help="Percentage of examples that are bi-uni-directional LM (seq2seq).")
     parser.add_argument('--bi_prob', default=0, type=float,
                         help="Percentage of examples that are bidirectional LM.")
-    parser.add_argument('--l2r_prob', default=0, type=float,
-                        help="Percentage of examples that are unidirectional (left-to-right) LM.")
     parser.add_argument('--enable_butd', action='store_true',
                         help='set to take in region features')
     parser.add_argument('--region_bbox_file', default='coco_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5', type=str)
@@ -284,21 +282,12 @@ def main():
             vis_mask_prob=args.vis_mask_prob, enable_butd=args.enable_butd,
             region_bbox_file=args.region_bbox_file, region_det_file_prefix=args.region_det_file_prefix,
             local_rank=args.local_rank, load_vqa_ann=(args.tasks=='vqa2')))
-        bi_uni_pipeline.append(seq2seq_loader.Preprocess4Seq2seq(args.max_pred, args.mask_prob,
-            list(tokenizer.vocab.keys()), tokenizer.convert_tokens_to_ids, args.max_seq_length,
-            new_segment_ids=args.new_segment_ids, truncate_config={'max_len_a': args.max_len_a,
-            'max_len_b': args.max_len_b, 'trunc_seg': args.trunc_seg, 'always_truncate_tail':
-            args.always_truncate_tail}, mask_image_regions=args.mask_image_regions,
-            mode="l2r", len_vis_input=args.len_vis_input,
-            vis_mask_prob=args.vis_mask_prob, enable_butd=args.enable_butd,
-            region_bbox_file=args.region_bbox_file, region_det_file_prefix=args.region_det_file_prefix,
-            local_rank=args.local_rank, load_vqa_ann=(args.tasks=='vqa2')))
 
         train_dataset = seq2seq_loader.Img2txtDataset(
             args.src_file, args.image_root, args.split, args.train_batch_size,
             data_tokenizer, args.max_seq_length, file_valid_jpgs=args.file_valid_jpgs,
             bi_uni_pipeline=bi_uni_pipeline, use_num_imgs=args.use_num_imgs,
-            s2s_prob=args.s2s_prob, bi_prob=args.bi_prob, l2r_prob=args.l2r_prob,
+            s2s_prob=args.s2s_prob, bi_prob=args.bi_prob,
             enable_butd=args.enable_butd, tasks=args.tasks)
 
         if args.world_size == 1:
