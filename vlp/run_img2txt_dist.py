@@ -128,8 +128,8 @@ def main():
                         help="Use new segment ids for bi-uni-directional LM.")
     parser.add_argument('--tokenized_input', action='store_true',
                         help="Whether the input is tokenized.")
-    parser.add_argument('--max_len_a', type=int, default=0,
-                        help="Truncate_config: maximum length of segment A. 0 means none.")
+    parser.add_argument('--len_vis_input', type=int, default=100,
+                        help="The length of visual token input")
     parser.add_argument('--max_len_b', type=int, default=20,
                         help="Truncate_config: maximum length of segment B.")
     parser.add_argument('--trunc_seg', default='b',
@@ -149,7 +149,6 @@ def main():
     parser.add_argument("--src_file", default=['/mnt/dat/COCO/annotations/dataset_coco.json'],
                         type=str, nargs='+',
                         help="The input data file name.")
-    parser.add_argument('--len_vis_input', type=int, default=100)
     parser.add_argument('--enable_visdom', action='store_true')
     parser.add_argument('--visdom_port', type=int, default=8888)
     # parser.add_argument('--resnet_model', type=str, default='imagenet_weights/resnet101.pth')
@@ -266,7 +265,7 @@ def main():
     if args.do_train:
         bi_uni_pipeline = [seq2seq_loader.Preprocess4Seq2seq(args.max_pred, args.mask_prob,
             list(tokenizer.vocab.keys()), tokenizer.convert_tokens_to_ids, args.max_seq_length,
-            new_segment_ids=args.new_segment_ids, truncate_config={'max_len_a': args.max_len_a,
+            new_segment_ids=args.new_segment_ids, truncate_config={
             'max_len_b': args.max_len_b, 'trunc_seg': args.trunc_seg, 'always_truncate_tail':
             args.always_truncate_tail}, mask_image_regions=args.mask_image_regions,
             mode="s2s", len_vis_input=args.len_vis_input,
@@ -275,7 +274,7 @@ def main():
             local_rank=args.local_rank, load_vqa_ann=(args.tasks=='vqa2'))]
         bi_uni_pipeline.append(seq2seq_loader.Preprocess4Seq2seq(args.max_pred, args.mask_prob,
             list(tokenizer.vocab.keys()), tokenizer.convert_tokens_to_ids, args.max_seq_length,
-            new_segment_ids=args.new_segment_ids, truncate_config={'max_len_a': args.max_len_a,
+            new_segment_ids=args.new_segment_ids, truncate_config={
             'max_len_b': args.max_len_b, 'trunc_seg': args.trunc_seg, 'always_truncate_tail':
             args.always_truncate_tail}, mask_image_regions=args.mask_image_regions,
             mode="bi", len_vis_input=args.len_vis_input,
@@ -488,7 +487,7 @@ def main():
                     model.eval()
                     position_ids = torch.arange(input_ids.size(1), dtype=input_ids.dtype,
                         device=input_ids.device).unsqueeze(0).expand_as(input_ids)
-                    input_dummy = input_ids[:, :args.len_vis_input+2] # +2 for [CLS] and [SEP]
+                    input_dummy = input_ids[:, :args.len_vis_input + 2] # +2 for [CLS] and [SEP]
                     greedy_res = input_ids.new(input_ids.size(0), input_ids.size(1)-args.len_vis_input-2).fill_(0)
                     gen_result = input_ids.new(input_ids.size(0), input_ids.size(1)-args.len_vis_input-2).fill_(0)
 

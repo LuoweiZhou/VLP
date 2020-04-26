@@ -137,7 +137,7 @@ def main():
     bi_uni_pipeline = []
     bi_uni_pipeline = [seq2seq_loader.Preprocess4Seq2seq(0, 0,
         list(tokenizer.vocab.keys()), tokenizer.convert_tokens_to_ids, args.max_seq_length,
-        new_segment_ids=args.new_segment_ids, truncate_config={'max_len_a': args.len_vis_input,
+        new_segment_ids=args.new_segment_ids, truncate_config={
         'max_len_b': args.max_tgt_length, 'trunc_seg': 'b', 'always_truncate_tail': True},
         mode="bi", len_vis_input=args.len_vis_input, enable_butd=args.enable_butd,
         region_bbox_file=args.region_bbox_file, region_det_file_prefix=args.region_det_file_prefix,

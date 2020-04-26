@@ -181,7 +181,6 @@ class Preprocess4Seq2seq(Pipeline):
 
     def __init__(self, max_pred, mask_prob, vocab_words, indexer, max_len=512, block_mask=False, new_segment_ids=False, truncate_config={}, mask_image_regions=False, mode="s2s", len_vis_input=49, vis_mask_prob=0.25, enable_butd=False, region_bbox_file='', region_det_file_prefix='', local_rank=-1, load_vqa_ann=False):
         super().__init__()
-        self.max_len = max_len
         self.max_pred = max_pred  # max tokens of prediction
         self.mask_prob = mask_prob  # masking probability
         self.vocab_words = vocab_words  # vocabulary (sub)words
@@ -192,7 +191,6 @@ class Preprocess4Seq2seq(Pipeline):
         self.new_segment_ids = new_segment_ids
         self.always_truncate_tail = truncate_config.get(
             'always_truncate_tail', False)
-        self.max_len_a = truncate_config.get('max_len_a', None)
         self.max_len_b = truncate_config.get('max_len_b', None)
         self.trunc_seg = truncate_config.get('trunc_seg', None)
         self.mask_image_regions = mask_image_regions
@@ -232,8 +230,8 @@ class Preprocess4Seq2seq(Pipeline):
         img_path, tokens_b = instance[:2]
         tokens_a = ['[UNK]'] * self.len_vis_input
 
-        num_truncated_a, _ = truncate_tokens_pair(tokens_a, tokens_b,
-            self.max_len - 3, max_len_a=self.max_len_a, max_len_b=self.max_len_b,
+        truncate_tokens_pair(tokens_a, tokens_b,
+            self.len_vis_input + self.max_len_b, max_len_b=self.max_len_b,
             trunc_seg=self.trunc_seg, always_truncate_tail=self.always_truncate_tail)
 
         # Add Special Tokens
@@ -251,7 +249,7 @@ class Preprocess4Seq2seq(Pipeline):
         # the number of prediction is sometimes less than max_pred when sequence is short
         effective_length = len(tokens_b)
         n_pred = min(self.max_pred, max(
-            1, int(round(effective_length*self.mask_prob))))
+            1, int(round(effective_length * self.mask_prob))))
         # candidate positions of masked tokens
         cand_pos = []
         special_pos = set()
@@ -287,8 +285,8 @@ class Preprocess4Seq2seq(Pipeline):
 
         # Zero Padding
         n_pad = self.max_len - len(input_ids)
-        input_ids.extend([0]*n_pad)
-        segment_ids.extend([0]*n_pad)
+        input_ids.extend([0] * n_pad)
+        segment_ids.extend([0] * n_pad)
 
         # self-attention mask
         input_mask = torch.zeros(self.max_len, self.max_len, dtype=torch.long)
@@ -299,7 +297,7 @@ class Preprocess4Seq2seq(Pipeline):
             input_mask[second_st:second_end, second_st:second_end].copy_(
                 self._tril_matrix[:second_end-second_st, :second_end-second_st])
         else:
-            input_mask = torch.tensor([1]*len(tokens)+[0]*n_pad, dtype=torch.long) \
+            input_mask = torch.tensor([1] * len(tokens) + [0] * n_pad, dtype=torch.long) \
                 .unsqueeze(0).expand(self.max_len, self.max_len).clone()
 
         if self.mask_image_regions:
@@ -308,9 +306,9 @@ class Preprocess4Seq2seq(Pipeline):
         # Zero Padding for masked target
         if self.max_pred > n_pred:
             n_pad = self.max_pred - n_pred
-            masked_ids.extend([0]*n_pad)
-            masked_pos.extend([0]*n_pad)
-            masked_weights.extend([0]*n_pad)
+            masked_ids.extend([0] * n_pad)
+            masked_pos.extend([0] * n_pad)
+            masked_weights.extend([0] * n_pad)
 
         if not self.enable_butd:
             # loading images
@@ -366,7 +364,6 @@ class Preprocess4Seq2seqDecoder(Pipeline):
 
     def __init__(self, vocab_words, indexer, max_len=512, max_tgt_length=128, new_segment_ids=False, mode="s2s", enable_butd=False, len_vis_input=49, region_bbox_file='', region_det_file_prefix=''):
         super().__init__()
-        self.max_len = max_len
         self.vocab_words = vocab_words  # vocabulary (sub)words
         self.indexer = indexer  # function from token to token index
         self.max_len = max_len
