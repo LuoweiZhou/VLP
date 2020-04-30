@@ -105,7 +105,7 @@ export PYTHONPATH=$CODE_ROOT/pythia:$CODE_ROOT/pythia/pythia/legacy:$CODE_ROOT:$
 
 
 ## Pre-training
-An example code on single-GPU training (note that this could not be done until we have the CC region features):
+An example code on single-GPU training:
 ```
 python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_cc} \
     --model_recover_path $CHECKPOINT_ROOT/bert_save/base_model_pretrained/model_153999_cpu.bin \
