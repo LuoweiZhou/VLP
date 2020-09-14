@@ -61,7 +61,7 @@ docker build -t vlp .
 Download links for dataset annotations and features: COCO Captions+VQA 2.0 ([Part I(95GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212019&authkey=ACn4bwZ0nmZ0nik), [Part II(79GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212018&authkey=AHoTGG-7-6kwoAY), download both and run `cat COCO0* > COCO.tar.gz`), [Flickr30k Captions(27GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212015&authkey=AFZ2iehPM8HREeA). **If you prefer to download with `wget`, we attach the commands [here](#misc)**.
 Then, uncompress the downloaded files and place under your data root (denoted as `DATA_ROOT`).
 
-To prepare for the pre-training, first download and uncompress our pre-processed Conceptual Captions (CC) [data(6GB)](https://onedrive.live.com/embed?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%213781&authkey=ANA--esfJnWIKIE) and place under your data root. Then, download and uncompress the region features from Google Drive ([feat(509GB)](https://drive.google.com/file/d/14mr49-14-ZjJXOohInzoOLBZlJb_y7fh/view?usp=sharing), [cls(468GB)](https://drive.google.com/file/d/1kRlnQJcTjGFaOHSptekgG98MiCsTQYDt/view?usp=sharing)) under the `CC/region_feat_gvd_wo_bgd/feat_cls_1000_float16` dir.  To evaluate CC on caption generation, download the reference [file](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212017&authkey=AHy5eiJM75RwPxg) and place it under `coco-caption/annotations`.
+To prepare for the pre-training, first download and uncompress our pre-processed Conceptual Captions (CC) [data(6GB)](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%213781&authkey=ANA--esfJnWIKIE) and place under your data root. Then, download and uncompress the region features from Google Drive ([feat(509GB)](https://drive.google.com/file/d/14mr49-14-ZjJXOohInzoOLBZlJb_y7fh/view?usp=sharing), [cls(468GB)](https://drive.google.com/file/d/1kRlnQJcTjGFaOHSptekgG98MiCsTQYDt/view?usp=sharing)) under the `CC/region_feat_gvd_wo_bgd/feat_cls_1000_float16` dir.  To evaluate CC on caption generation, download the reference [file](https://onedrive.live.com/download?cid=E5364FD183A1F5BB&resid=E5364FD183A1F5BB%212017&authkey=AHy5eiJM75RwPxg) and place it under `coco-caption/annotations`.
 
 Besides, download and uncompress the detectron fc7 weight files under the code root directory (denoted as `CODE_ROOT`): [GVD Detectron fc7](https://dl.fbaipublicfiles.com/ActivityNet-Entities/ActivityNet-Entities/detectron_weights.tar.gz).
 
@@ -134,7 +134,7 @@ python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_c
     --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0
 ```
 
-(Optional) To enable Self-Critical Sequence Training (SCST), set `--model_recover_path $CHECKPOINT_ROOT/${checkpoint_coco_ce}` `--max_pred 0`, `--mask_prob 0`, and `--scst`. The training takes 30 epochs to converge with each epoch takes roughly 3hr.
+(Optional) To enable Self-Critical Sequence Training (SCST), set `--model_recover_path $CHECKPOINT_ROOT/${checkpoint_coco_ce}/model.28.bin` `--max_pred 0`, `--mask_prob 0`, `--scst`, and `--output_dir` accordingly. The training takes 30 epochs to converge with each epoch takes roughly 3hr.
 
 An example code on 2-GPU training with distributed data parallel:
 ```

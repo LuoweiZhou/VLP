@@ -357,7 +357,7 @@ def main():
                 max_position_embeddings=args.max_position_embeddings, config_path=args.config_path,
                 state_dict=model_recover, num_labels=cls_num_labels, type_vocab_size=type_vocab_size,
                 task_idx=task_idx_proj, mask_word_id=mask_word_id, search_beam_size=1,
-                eos_id=eos_word_ids, mode='s2s', enable_butd=args.enable_butd,
+                eos_id=eos_word_ids, enable_butd=args.enable_butd,
                 len_vis_input=args.len_vis_input)
 
         del model_recover

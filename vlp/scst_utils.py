@@ -54,7 +54,7 @@ def get_self_critical_reward(greedy_res, gt_ids, gen_result, batch_size):
     cider_reward_weight = 1
     # print(gts, res)
     _, cider_scores = CiderD_scorer.compute_score(gts, res)
-    print('Cider scores:', _)
+    # print('Cider scores:', _)
 
     scores = cider_reward_weight * cider_scores
     scores = scores[:batch_size] - scores[batch_size:]
