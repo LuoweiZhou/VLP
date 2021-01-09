@@ -134,7 +134,7 @@ python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_coco_c
     --image_root $DATA_ROOT/COCO/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0
 ```
 
-(Optional) To enable Self-Critical Sequence Training (SCST), set `--model_recover_path $CHECKPOINT_ROOT/${checkpoint_coco_ce}/model.28.bin` `--max_pred 0`, `--mask_prob 0`, `--scst`, and `--output_dir` accordingly. The training takes 30 epochs to converge with each epoch takes roughly 3hr.
+(Optional) To enable Self-Critical Sequence Training (SCST), set `--model_recover_path $CHECKPOINT_ROOT/${checkpoint_coco_ce}/model.28.bin`, `--max_pred 0`, `--mask_prob 0`, `--scst`, `--learning_rate 1e-6` (note that SCST requires a much smaller lr than the default `3e-5`), and `--output_dir` accordingly. The training takes 30 epochs to converge with each epoch takes roughly 3hr.
 
 An example code on 2-GPU training with distributed data parallel:
 ```
