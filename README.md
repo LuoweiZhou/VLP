@@ -176,7 +176,7 @@ python vlp/run_img2txt_dist.py --output_dir $CHECKPOINT_ROOT/${checkpoint_flickr
     --model_recover_path $CHECKPOINT_ROOT/${checkpoint_cc}/model.30.bin \
     --do_train --new_segment_ids --always_truncate_tail --amp \
     --image_root $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd --enable_butd --s2s_prob 1 --bi_prob 0 \
-    --dataset flickr30k --region_bbox_file $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd/flickr30k_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5 \
+    --dataset flickr30k --region_bbox_file flickr30k_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5 \
     --src_file $DATA_ROOT/flickr30k/annotations/dataset_flickr30k.json \
     --file_valid_jpgs $DATA_ROOT/flickr30k/annotations/flickr30k_valid_jpgs.json
 ```
@@ -231,7 +231,7 @@ python vlp/decode_img2txt.py \
     --model_recover_path $CHECKPOINT_ROOT/${checkpoint_flickr30k}/model.${epoch}.bin \
     --new_segment_ids --batch_size 100 --beam_size ${beam} --enable_butd \
     --image_root $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd/ --split ${split} \
-    --dataset flickr30k --region_bbox_file $DATA_ROOT/flickr30k/region_feat_gvd_wo_bgd/flickr30k_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5 \
+    --dataset flickr30k --region_bbox_file flickr30k_detection_vg_thresh0.2_feat_gvd_checkpoint_trainvaltest.h5 \
     --src_file $DATA_ROOT/flickr30k/annotations/dataset_flickr30k.json \
     --file_valid_jpgs $DATA_ROOT/flickr30k/annotations/flickr30k_valid_jpgs.json
 ```
